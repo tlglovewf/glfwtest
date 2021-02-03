@@ -8,10 +8,10 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/GLFWTest",
+            "program": "${workspaceFolder}/build/output/test_glfw",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/",
+            "cwd": "${workspaceFolder}/build/output",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"

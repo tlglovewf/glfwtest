@@ -12,21 +12,29 @@ if (POLICY CMP0077)
     cmake_policy(SET CMP0077 NEW)
 endif()
 
-link_libraries(glfw3 glad)
+option(BUILD_TEST "build test program" ON)
 
-add_definitions(-std=c++14)
+add_definitions(-std=c++11)
+ 
+message("Build Type : " ${CMAKE_BUILD_TYPE})
 
-add_executable(${PROJECT_NAME} test_glfw.cpp)
+if(${CMAKE_BUILD_TYPE} STREQUAL " ")
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
 
-target_link_libraries(${PROJECT_NAME} GL X11 -pthread -lm dl)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-file(GLOB FILES "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
+link_libraries(glfw3 glad)
 
+set(MYSDK "mygl")
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
+add_definitions(-DSHADERS_PATH="${PROJECT_SOURCE_DIR}/shaders/")
 
-message(${FILES})
+add_subdirectory(source)
 
-add_executable("test" test_cpp.cpp ${FILES})
+if(BUILD_TEST)
+    add_subdirectory(test)
+endif()
