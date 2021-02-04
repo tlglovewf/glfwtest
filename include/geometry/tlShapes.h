@@ -58,17 +58,17 @@ namespace tl
             const float half_len = (mradius / 2.0f);
             vertex vtx;
             vtx.clr = mclr;
-            vtx.pos = { -half_len, -half_len, 0.0f};
+            vtx.pos = { -half_len, -half_len, -0.0f};
             pts.emplace_back(vtx);
-            vtx.pos = { -half_len,  half_len, 0.0f};
+            vtx.pos = {  half_len, -half_len, -0.0f};
             pts.emplace_back(vtx);
-            vtx.pos = {  half_len,  half_len, 0.0f};
+            vtx.pos = {  half_len,  half_len, -0.0f};
             pts.emplace_back(vtx);
-            vtx.pos = { -half_len,  half_len, 0.0f};
+            vtx.pos = { -half_len,  half_len, -0.0f};
             pts.emplace_back(vtx);
 
-            indices = {0, 1, 3,
-                       1, 2, 3};
+            indices = {0, 1, 2,
+                       0, 2, 3};
         }
 
         //! 设置全局色彩

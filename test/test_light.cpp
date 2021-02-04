@@ -6,7 +6,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <render/tlshader.h>
+
+#include <glm/gtx/string_cast.hpp>
+
+#include <render/tlShader.h>
+#include <render/tlConstants.h>
 #include <geometry/tlShapes.h>
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
@@ -14,20 +18,24 @@
 template <typename IdxType>
 struct GpuDrawable
 {
-    GLuint                  vboIdx = -1;
-    GLuint                  eboIdx = -1;
+    
+    GLuint                  vboIdx = ErrorValue;
+    GLuint                  eboIdx = ErrorValue;
     tl::VertexVector        vertices;
     std::vector<IdxType>    indices;
+
+    static constexpr GLuint ErrorValue = -1;
+    inline bool check(GLuint v){return (v != ErrorValue);}
 };
 
 template <typename Shape, typename IdxType, typename In>
-class DrawableGenerator
+class Drawable
 {
 public:
-    DrawableGenerator(In in)
+    Drawable(In in, const tl::ColorType &clr)
     {
         Shape shape(in);
-        shape.setglobeColor({1.0, 0.0, 0.0, 1.0});
+        shape.setglobeColor(clr);
 
         shape.build(_value.vertices, _value.indices);
 
@@ -38,6 +46,19 @@ public:
         glGenBuffers(1, &_value.eboIdx);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint8_t) * _value.indices.size(), &_value.indices[0], GL_STATIC_DRAW);
+    }
+
+    ~Drawable()
+    {
+        if(_value.check(_value.vboIdx))
+        {
+            glDeleteBuffers(1,&_value.vboIdx);
+        }
+
+        if(_value.check(_value.eboIdx))
+        {
+            glDeleteBuffers(1, &_value.eboIdx);
+        }
     }
     //! 获取gpu渲染对象
     const GpuDrawable<IdxType> &get() const
@@ -60,8 +81,100 @@ public:
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
             }
     }
+    //! 绘制
+    void render(tl::Shader &shader)
+    {
+        shader.activate();
+
+        active();
+
+        glEnableVertexAttribArray(shader.vertexLoc());
+        glVertexAttribPointer(shader.vertexLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)0);
+        glEnableVertexAttribArray(shader.colorLoc());
+        glVertexAttribPointer(shader.colorLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)(sizeof(float) * 3));
+
+        if(std::is_same<IdxType, uint8_t>::value)
+        {
+            glDrawElements(GL_TRIANGLES, renderSize(), GL_UNSIGNED_BYTE , NULL);
+        }
+        else if(std::is_same<IdxType, uint16_t>::value)
+        {
+            glDrawElements(GL_TRIANGLES, renderSize(), GL_UNSIGNED_SHORT, NULL);
+        }
+        else
+        {
+            glDrawElements(GL_TRIANGLES, renderSize(), GL_UNSIGNED_INT  , NULL);
+        }
+    }
 protected:
     GpuDrawable<IdxType> _value;
+};
+
+
+class camera
+{
+public:
+    //! 获取世界变换矩阵
+    glm::mat4 getMVP()const { return _projMatrix * _viewMatrix * _modelMatrix ;}
+
+    //! 获取投影矩阵
+    glm::mat4 getProjMatrix()const
+    {
+        return _projMatrix;
+    }
+    //! 设置投影矩阵
+    void setProjMatrix( const glm::mat4 &matrix)
+    {
+        _projMatrix = matrix;
+    }
+
+    //! 设置投影矩阵
+    void setProjMatrixByPrespective(float fov, float ratio, float fNear, float fFar)
+    {
+        _projMatrix = glm::perspective( fov, ratio, fNear, fFar);
+    }
+
+    //! 设置投影矩阵
+    void setProjMatrixByOrtho(float left, float right, float bottom, float top)
+    {
+        _projMatrix = glm::ortho(left, right, bottom, top);
+    }
+    
+    //! 获取视图矩阵
+    glm::mat4 getViewMatrix()const
+    {
+        return _viewMatrix;
+    }
+
+    //! 设置视图矩阵
+    void setViewMatrix( const glm::mat4 &matrix ) 
+    {
+        _viewMatrix = matrix;
+    }
+
+    //! 设置视图矩阵
+    void setViewMatrix( const glm::vec3 &eye, const glm::vec3 &target, const glm::vec3 &up)
+    {
+        _viewMatrix = glm::lookAt( eye, target, up);
+    }
+
+    //! 获取模型矩阵
+    glm::mat4 getModelMatrix()const
+    {
+        return _modelMatrix;
+    }
+
+    //! 设置模型矩阵
+    void setModelMatrix(const glm::mat4 &matrix)
+    {
+        _modelMatrix = matrix;
+    }
+protected:
+    glm::mat4 _modelMatrix = glm::identity<glm::mat4>();
+
+    glm::mat4 _viewMatrix  = glm::identity<glm::mat4>();
+
+    glm::mat4 _projMatrix  = glm::identity<glm::mat4>();
 };
 
 int main(int argc, char **argv)
@@ -78,7 +191,7 @@ int main(int argc, char **argv)
 
     glfwMakeContextCurrent(window);
 
-    if (/*!gladLoadGL())*/ !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGL()) //!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "load glad failed!" << std::endl;
         return -1;
@@ -95,68 +208,51 @@ int main(int argc, char **argv)
         glfwTerminate();
         return -1;
     }
-    // glfwWindowHint()
-    glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int x, int y, int z) {
-        std::cout << "x = " << x << " y = " << y << " z = " << z << std::endl;
-    });
 
-    //a 键值    b 次数   c : 1按下  2连续按   d 组合按键
-    glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-        if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)
-        {
-            glfwSetWindowShouldClose(window, GL_TRUE);
-        }
-    });
-    DrawableGenerator<tl::Plane, uint8_t, float> pyramid(100.0f);
-
+    Drawable<tl::Pyramid, uint8_t, float>      pyramid(100.0f , glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    Drawable<tl::Plane, uint8_t, float>        plane  (600.0f , glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    
     tl::Shader shader;
-    shader.attach("triangle.vert");
-    shader.attach("triangle.frag");
+    shader.attach("normal.vert");
+    shader.attach("normal.frag");
     shader.link();
-
-    GLuint mvp_location = shader.uniformloc("MVP");
-    GLuint vpos_location = shader.attriloc("vPos");
-    GLuint vcol_location = shader.attriloc("vCol");
-
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)0);
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)(sizeof(float) * 3));
 
     glEnable(GL_MULTISAMPLE);
     glDisable(GL_CULL_FACE);
-    
+    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable()
+
+    camera cam;
+    cam.setProjMatrixByPrespective(glm::radians(45.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 1.0f, 2000.0f);
+    cam.setViewMatrix(glm::vec3(0.0f, -800.0f, 400.0f), glm::vec3(0, 0, 100), glm::vec3(0, 1, 0));
+
     while (!glfwWindowShouldClose(window))
     {
-        shader.activate();
         int width, height;
         //获取长宽
         glfwGetFramebufferSize(window, &width, &height);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glClearColor(135.0f / 255.0f, 206.0f / 255.0f, 206.0f / 255.0f, 1.0f);
 
-        glm::mat4 mvp = glm::identity<glm::mat4>();
+        glm::mat4 modelmtrix =  glm::translate(glm::identity<glm::mat4>(),glm::vec3(0,0,150)) * 
+                                glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * 2.0f,glm::vec3(1,1,1));
 
-        glm::mat4 modelmtrix = glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * 2.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-
-        glm::mat4 projmatrix = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.0f, 1000.0f);
-
-        glm::mat4 viewmatrix = glm::lookAt(glm::vec3(0.0f, 50.0f, -800.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-        mvp = projmatrix * viewmatrix * modelmtrix;
-
-        GLuint loc = shader.uniformloc("fade");
-        static float fade = 1e-4;
-        glUniform1f(loc, fade);
-        fade += 1e-4;
-
-        shader.bind("MVP", mvp);
+        cam.setModelMatrix(modelmtrix);
+       
         //设置视口
         glViewport(0, 0, width, height);
-        pyramid.active();
-        glDrawElements(GL_TRIANGLES, pyramid.renderSize(), GL_UNSIGNED_BYTE, NULL);
+
+        shader.bind(UNIFORM_MVP, cam.getMVP());
+        pyramid.render(shader);
+
+        cam.setModelMatrix(glm::translate(glm::identity<glm::mat4>(),glm::vec3(0, 0, 0)));
+
+        shader.bind(UNIFORM_MVP, cam.getMVP());
+        plane.render(shader);
 
         glfwSwapBuffers(window);
 

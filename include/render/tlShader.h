@@ -7,7 +7,7 @@
 
 // Standard Headers
 #include <string>
-
+#include <render/tlConstants.h>
 // Define Namespace
 namespace tl
 {
@@ -42,10 +42,62 @@ namespace tl
             return glGetUniformLocation(mProgram, name.c_str());
         }
 
-        GLuint attriloc(const std::string &name)
+        inline GLuint attriloc(const std::string &name)
         {
             return glGetAttribLocation(mProgram,name.c_str());
         }
+
+        //! 世界矩阵坐标
+        inline GLint mvpLoc()
+        {
+            if(mMvpLoc < 0)
+            {
+                mMvpLoc = uniformloc(UNIFORM_MVP);
+            }
+            return mMvpLoc;
+        }
+
+        //! 获取定点位置
+        inline GLint vertexLoc()
+        {
+            if(mVtxLoc < 0)
+            {
+                mVtxLoc = attriloc(ATTR_VERTEX);
+            }
+            return mVtxLoc;
+        }
+
+        //! 获取颜色位置
+        inline GLint colorLoc()
+        {
+            if(mClrLoc < 0)
+            {
+                mClrLoc = attriloc(ATTR_COLOR);
+            }
+            return mClrLoc;
+        }
+
+        //! 获取纹理位置
+        inline GLint textureLoc()
+        {
+            if(mUvLoc < 0)
+            {
+                mUvLoc = attriloc(ATTR_TEXTURE0);
+            }
+            return mUvLoc;
+        }
+
+        //! 获取法线位置
+        inline GLint normalLoc()
+        {
+            if( mNorLoc < 0)
+            {
+                mNorLoc = attriloc(ATTR_NORMAL);
+            }
+            return mNorLoc;
+        }
+
+    
     private:
 
         // Disable Copying and Assignment
@@ -57,5 +109,10 @@ namespace tl
         GLint  mStatus;
         GLint  mLength;
 
+        GLint  mMvpLoc = -1;
+        GLint  mVtxLoc = -1;
+        GLint  mClrLoc = -1;
+        GLint  mUvLoc  = -1;
+        GLint  mNorLoc = -1;
     };
 };

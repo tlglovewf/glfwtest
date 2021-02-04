@@ -1,6 +1,6 @@
 varying vec3 color;
-uniform float fade;
+uniform float uFade;
 void main()
 {
-   gl_FragColor = vec4(color * fade, 0.0);
+   gl_FragColor = vec4(color, uFade);
 }

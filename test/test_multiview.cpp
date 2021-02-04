@@ -6,7 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <render/tlshader.h>
+#include <render/tlShader.h>
+#include <render/tlConstants.h>
 
 #define WIN_WIDTH    800
 #define WIN_HEIGHT   600
@@ -78,9 +79,9 @@ int main(int argc, char **argv)
     shader.attach("triangle.frag");
     shader.link();
 
-    GLuint mvp_location = shader.uniformloc("MVP");
-    GLuint vpos_location= shader.attriloc("vPos");
-    GLuint vcol_location= shader.attriloc("vCol");
+    GLuint mvp_location = shader.uniformloc(UNIFORM_MVP);
+    GLuint vpos_location= shader.attriloc(ATTR_VERTEX);
+    GLuint vcol_location= shader.attriloc(ATTR_COLOR);
 
     glEnableVertexAttribArray(vpos_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)0);
@@ -113,7 +114,7 @@ int main(int argc, char **argv)
 
         mvp = projmatrix * viewmatrix * modelmtrix;
 
-        GLuint loc = shader.uniformloc("fade");
+        GLuint loc = shader.uniformloc(UNIFORM_FADE);
         static float fade = 1e-4;
         glUniform1f(loc,fade);
         fade += 1e-4;
@@ -121,7 +122,7 @@ int main(int argc, char **argv)
         {
             //设置视口
             glViewport(0, 0, width / 2, height / 2);
-            shader.bind("MVP", mvp);
+            shader.bind(UNIFORM_MVP, mvp);
             // glUseProgram(program);
             glDrawArrays(GL_TRIANGLES,0, 3);
         }
@@ -132,7 +133,7 @@ int main(int argc, char **argv)
             modelmtrix = glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * -5.0f, glm::vec3(0.0f, 0.0f, 1.0f));
             modelmtrix = glm::scale(modelmtrix,glm::vec3(fade));
             mvp = projmatrix * viewmatrix * modelmtrix;
-            shader.bind("MVP", mvp);
+            shader.bind(UNIFORM_MVP, mvp);
             
             glDrawArrays(GL_TRIANGLES,0,3);
         }
@@ -142,7 +143,7 @@ int main(int argc, char **argv)
             glViewport(0, height / 2, width / 2, height / 2);
 
             mvp = glm::ortho( -0.5f * width, 0.5f * width , -0.5f * height, 0.5f * height ,0.0f,100.0f);
-            shader.bind("MVP", mvp);
+            shader.bind(UNIFORM_MVP, mvp);
 
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
             modelmtrix = glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * -5.0f, glm::vec3(0.0f, 1.0f, 0.0f));
             modelmtrix = glm::scale(modelmtrix,glm::vec3(fade));
             mvp = projmatrix * viewmatrix * modelmtrix;
-            shader.bind("MVP", mvp);
+            shader.bind(UNIFORM_MVP, mvp);
 
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
