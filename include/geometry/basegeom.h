@@ -26,13 +26,21 @@ namespace tl
     class base_geom : public disablecopyable
     {
     public:
+        using Type = INDICETYPE;
+        //! 构造函数
+        base_geom(float len):_axisLen(len){}
+
         //! 构建网格
         virtual void build( VertexVector &pts, std::vector<INDICETYPE> &indices) = 0;
 
         //! 设置全局色彩
-        virtual void setglobeColor(const ColorType &) = 0;
-    protected:
+        virtual void setglobeColor(const ColorType &v) {_color = v;}
 
+        //! 渲染类型
+        virtual uint64_t renderType()const = 0;
+    protected:
+        float       _axisLen;
+        ColorType   _color;
     };
 } // namespace tl
 

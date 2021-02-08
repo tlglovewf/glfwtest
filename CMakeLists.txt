@@ -16,11 +16,11 @@ option(BUILD_TEST "build test program" ON)
 
 add_definitions(-std=c++11)
  
-message("Build Type : " ${CMAKE_BUILD_TYPE})
-
-if(${CMAKE_BUILD_TYPE} STREQUAL " ")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "")
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
+
+message("Build Type : " ${CMAKE_BUILD_TYPE})
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
@@ -34,6 +34,7 @@ set(MYSDK "mygl")
 add_definitions(-DSHADERS_PATH="${PROJECT_SOURCE_DIR}/shaders/")
 
 add_subdirectory(source)
+
 
 if(BUILD_TEST)
     add_subdirectory(test)
