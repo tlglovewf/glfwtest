@@ -3,7 +3,7 @@
 namespace tl
 {
     template <typename Shape>
-    Drawable<Shape>::Drawable(float in, const tl::ColorType &clr)
+    Drawable<Shape>::Drawable(float in, const tl::color_t &clr)
     {
         Shape shape(in);
         shape.setglobeColor(clr);
@@ -50,13 +50,20 @@ namespace tl
         shader.activate();
 
         active();
-
+        int offset = 0;
         glEnableVertexAttribArray(shader.vertexLoc());
-        glVertexAttribPointer(shader.vertexLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)0);
-        glEnableVertexAttribArray(shader.colorLoc());
-        glVertexAttribPointer(shader.colorLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), (void *)(sizeof(float) * 3));
+        glVertexAttribPointer(shader.vertexLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), reinterpret_cast<void *>(offset));
+        offset += sizeof(tl::vertex::pos);
 
-        if (std::is_same<IdxType, uint8_t>::value)
+        glEnableVertexAttribArray(shader.colorLoc());
+        glVertexAttribPointer(shader.colorLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), reinterpret_cast<void *>(offset));
+        offset += sizeof(tl::vertex::clr);
+
+        glEnableVertexAttribArray(shader.normalLoc());
+        glVertexAttribPointer(shader.normalLoc(), 3, GL_FLOAT, GL_FALSE, sizeof(tl::vertex), reinterpret_cast<void *>(offset));
+        offset += sizeof(tl::vertex::nor);
+
+        if (std::is_same<IdxType, uint8_t>::value) 
         {
             glDrawElements(Shape(0).renderType(), renderSize(), GL_UNSIGNED_BYTE, NULL);
         }

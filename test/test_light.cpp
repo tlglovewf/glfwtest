@@ -13,6 +13,7 @@
 #include <render/tlConstants.h>
 #include <render/tlDrawable.h>
 #include <render/tlCamera.h>
+#include <render/tlLight.h>
 #include <geometry/tlShapes.h>
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
@@ -50,12 +51,12 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    tl::Drawable< tl::Box  > pyramid(100.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    tl::Drawable< tl::Plane> plane  (600.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    tl::Drawable< tl::Box  > pyramid(100.0f, tl::color_t(1.0f, 0.0f, 0.0f, 1.0f));
+    tl::Drawable< tl::Plane> plane  (600.0f, tl::color_t(1.0f, 1.0f, 1.0f, 1.0f));
 
     tl::Shader shader;
-    shader.attach("normal.vert");
-    shader.attach("normal.frag");
+    shader.attach("pointlight.vert");
+    shader.attach("pointlight.frag");
     shader.link();
 
     glEnable(GL_MULTISAMPLE);
@@ -68,15 +69,31 @@ int main(int argc, char **argv)
     cam.setProjMatrixByPrespective(glm::radians(45.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 1.0f, 2000.0f);
     cam.setViewMatrix(glm::vec3(0.0f, -800.0f, 120.0f), glm::vec3(0, 0, 100), glm::vec3(0, 1, 0));
 
+    //! set default color
+    const float rt = 0.5f;
+    tl::color_t ambiclr = {rt, rt, rt, rt};
+    
+    tl::PointLight ptlight;
+    ptlight.pos = {};
+    ptlight.clr = {1.0f, 1.0f, 0.0f, 1.0f};
+    
+
     while (!glfwWindowShouldClose(window))
     {
-        int width, height;
+
+        shader.bind(UNIFORM_AMBCLR, ambiclr);
+        shader.bind(UNIFORM_LIGHTPOS, ptlight.pos);
+        shader.bind(UNIFORM_LIGHTCLR, ptlight.clr);
+
+        int width  = 0;
+        int height = 0;
         //获取长宽
         glfwGetFramebufferSize(window, &width, &height);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glClearColor(135.0f / 255.0f, 206.0f / 255.0f, 206.0f / 255.0f, 1.0f);
+        // glClearColor(135.0f / 255.0f, 206.0f / 255.0f, 206.0f / 255.0f, 1.0f);  lightblue
+        glClearColor(0.0, 0.0, 0.0, 1.0);
 
         glm::mat4 modelmtrix = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 150)) *
                                glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * 2.0f, glm::vec3(0, 0, 1)) *
@@ -89,6 +106,7 @@ int main(int argc, char **argv)
         glViewport(0, 0, width, height);
 
         shader.bind(UNIFORM_MVP, cam.getMVP());
+        
         pyramid.render(shader);
 
         cam.setModelMatrix(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 0)));

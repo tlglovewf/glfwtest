@@ -6,6 +6,11 @@
 #define UNIFORM_MVP      "uMvp"
 #define UNIFORM_FADE     "uFade"
 
+#define UNIFORM_AMBCLR   "ambientcolor"
+#define UNIFORM_LIGHTCLR "lightcolor"
+#define UNIFORM_LIGHTPOS "lightpos"
+#define UNIFORM_LIGHTDIR "lightdir"
+
 #define ATTR_VERTEX      "aVtx"
 #define ATTR_COLOR       "aClr"
 #define ATTR_NORMAL      "aNor"

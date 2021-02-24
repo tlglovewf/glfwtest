@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <utils/tlFounctions.h>
 #include <geometry/tlShapes.h>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 namespace tl
 {
     //! 构建网格
@@ -44,6 +47,8 @@ namespace tl
 
         indices = {0, 1, 2,
                    0, 2, 3};
+
+        ShapeNorAutoGenerator::generate(pts,indices);
     }
 
     //! 构建网格
@@ -112,25 +117,25 @@ namespace tl
         indices.reserve(6);
 
         vertex vtx;
-        vtx.clr = ColorType(1.0f, 0.0f, 0.0f, 1.0f);
+        vtx.clr = color_t(1.0f, 0.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
         pts.emplace_back(vtx);
-        vtx.clr = ColorType(0.0f, 1.0f, 0.0f, 1.0f);
+        vtx.clr = color_t(0.0f, 1.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
         pts.emplace_back(vtx);
-        vtx.clr = ColorType(0.0f, 0.0f, 1.0f, 1.0f);
+        vtx.clr = color_t(0.0f, 0.0f, 1.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
         pts.emplace_back(vtx);
 
-        vtx.clr = ColorType(1.0f, 0.0f, 0.0f, 1.0f);
+        vtx.clr = color_t(1.0f, 0.0f, 0.0f, 1.0f);
         vtx.pos = {_axisLen, 0.0f, 0.0f};
         pts.emplace_back(vtx);
 
-        vtx.clr = ColorType(0.0f, 1.0f, 0.0f, 1.0f);
+        vtx.clr = color_t(0.0f, 1.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, _axisLen, 0.0f};
         pts.emplace_back(vtx);
 
-        vtx.clr = ColorType(0.0f, 0.0f, 1.0f, 1.0f);
+        vtx.clr = color_t(0.0f, 0.0f, 1.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, _axisLen};
         pts.emplace_back(vtx);
         
@@ -143,5 +148,29 @@ namespace tl
         float half_len = _axisLen / 2.0f;
 
       
+    }
+    template<typename T>
+    void ShapeNorAutoGenerator::generate(VertexVector &pts, const T &indices)
+    {
+        static_assert( std::is_same<T,U8IndiceVector>::value |
+                       std::is_same<T,U16IndiceVector>::value|
+                       std::is_same<T,U32IndiceVector>::value,"indices type error.");
+
+        if(!pts.empty() && 
+           !indices.empty())
+           {
+               for(size_t i = 0; i < indices.size(); i += 3)
+               {
+                    vec3 nor = std::move(tl::Founctions::calcnor(pts[indices[i + 0]].pos, 
+                                                                 pts[indices[i + 1]].pos,
+                                                                 pts[indices[i + 2]].pos));
+                    pts[indices[i + 0]].nor = nor;
+                    pts[indices[i + 1]].nor = nor;
+                    pts[indices[i + 2]].nor = nor;
+
+                    std::cout << glm::to_string<vec3>(nor) << std::endl;
+               }
+           }
+
     }
 } // namespace tl

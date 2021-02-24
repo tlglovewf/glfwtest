@@ -23,7 +23,7 @@ namespace tl
         };
 
     public:
-        Drawable(float in, const ColorType &clr);
+        Drawable(float in, const color_t &clr);
 
         ~Drawable();
 

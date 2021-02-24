@@ -2,6 +2,7 @@
 #define _TLSHAPES_H_
 #include <geometry/basegeom.h>
 #include <utils/tlFounctions.h>
+
 namespace tl
 {
 #define L_LINES        0x0001
@@ -76,6 +77,15 @@ namespace tl
 
        //! 渲染类型
        virtual uint64_t renderType()const {return L_TRIANGLES;}
+    };
+
+    //! 法线自动生成
+    class ShapeNorAutoGenerator final
+    {
+    public:
+        //! 生成
+        template<typename T>
+        static void generate(VertexVector &pts, const T &indices);
     };
 } // namespace tl
 
