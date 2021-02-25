@@ -47,10 +47,12 @@ namespace tl
         // Display the Build Log on Error
         if (mStatus == false)
         {
+            
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, & mLength);
             std::unique_ptr<char[]> buffer(new char[mLength]);
             glGetShaderInfoLog(shader, mLength, nullptr, buffer.get());
             fprintf(stderr, "%s\n%s", filename.c_str(), buffer.get());
+            exit(-1);
             return false;
         }
 
