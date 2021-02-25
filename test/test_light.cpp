@@ -50,9 +50,9 @@ int main(int argc, char **argv)
         glfwTerminate();
         return -1;
     }
-
+    const float grayclr = 0.5f;
     tl::Drawable< tl::Box  > pyramid(100.0f, tl::color_t(1.0f, 0.0f, 0.0f, 1.0f));
-    tl::Drawable< tl::Plane> plane  (600.0f, tl::color_t(1.0f, 1.0f, 1.0f, 1.0f));
+    tl::Drawable< tl::Plane> plane  (600.0f, tl::color_t(grayclr, grayclr, grayclr, 1.0f));
 
     tl::Shader shader;
     shader.attach("pointlight.vert");
@@ -74,8 +74,8 @@ int main(int argc, char **argv)
     tl::color_t ambiclr = {rt, rt, rt, rt};
     
     tl::PointLight ptlight;
-    ptlight.pos = {};
-    ptlight.clr = {1.0f, 1.0f, 0.0f, 1.0f};
+    ptlight.pos = {0.0, 0.0, 500.0};
+    ptlight.clr = {1.0f, 1.0f, 1.0f, 1.0f};
     
 
     while (!glfwWindowShouldClose(window))
@@ -105,13 +105,17 @@ int main(int argc, char **argv)
         //设置视口
         glViewport(0, 0, width, height);
 
-        shader.bind(UNIFORM_MVP, cam.getMVP());
+        // shader.bind(UNIFORM_MVP, cam.getMVP());
+        shader.bind(UNIFORM_MODMTX, cam.getModelMatrix());
+        shader.bind(UNIFORM_VIEWMTX, cam.getViewMatrix());
+        shader.bind(UNIFORM_PRJMTX, cam.getProjMatrix());
         
         pyramid.render(shader);
 
         cam.setModelMatrix(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 0)));
 
-        shader.bind(UNIFORM_MVP, cam.getMVP());
+        // shader.bind(UNIFORM_MVP, cam.getMVP());
+        shader.bind(UNIFORM_MODMTX, cam.getModelMatrix());
         plane.render(shader);
 
         glfwSwapBuffers(window);

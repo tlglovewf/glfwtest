@@ -4,6 +4,10 @@
 
 /*  uniform variable */
 #define UNIFORM_MVP      "uMvp"
+#define UNIFORM_MODMTX   "uModelMatrix"
+#define UNIFORM_VIEWMTX  "uViewMatrix"
+#define UNIFORM_PRJMTX   "uProjMatrix"
+
 #define UNIFORM_FADE     "uFade"
 
 #define UNIFORM_AMBCLR   "ambientcolor"

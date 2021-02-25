@@ -13,10 +13,10 @@ namespace tl
     //! 定点坐标
     struct vertex
     {
-        vec3 pos;
-        vec3 clr;
-        vec3 nor;
-        vec2 uv;
+        vec3 pos = vec3(0.0);
+        vec3 clr = vec3(0.0);
+        vec3 nor = vec3(0.0);
+        vec2 uv  = vec2(0.0);
     };
     //定点缓存
     typedef std::vector<vertex>     VertexVector;

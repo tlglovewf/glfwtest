@@ -32,6 +32,14 @@ namespace tl
             {
                 glUniform4fv(location, 1, glm::value_ptr(value));
             }
+            else if(std::is_same<T, glm::vec3>::value)
+            {
+                glUniform3fv(location, 1, glm::value_ptr(value));
+            }
+            else
+            {
+                
+            }
         }
 
         template <typename T>

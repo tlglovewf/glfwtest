@@ -107,7 +107,7 @@ namespace tl
                    4, 5, 1,
                    1, 0, 4
                    };
-
+        ShapeNorAutoGenerator::generate(pts,indices);
     }
 
     //! 构建网格
@@ -164,11 +164,10 @@ namespace tl
                     vec3 nor = std::move(tl::Founctions::calcnor(pts[indices[i + 0]].pos, 
                                                                  pts[indices[i + 1]].pos,
                                                                  pts[indices[i + 2]].pos));
-                    pts[indices[i + 0]].nor = nor;
-                    pts[indices[i + 1]].nor = nor;
-                    pts[indices[i + 2]].nor = nor;
+                    pts[indices[i + 0]].nor += nor;
+                    pts[indices[i + 1]].nor += nor;
+                    pts[indices[i + 2]].nor += nor;
 
-                    std::cout << glm::to_string<vec3>(nor) << std::endl;
                }
            }
 
