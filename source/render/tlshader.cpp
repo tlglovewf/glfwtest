@@ -14,21 +14,6 @@ namespace tl
        glUseProgram(mProgram);
     }
 
-    // void Shader::bind(unsigned int location, float value) { glUniform1f(location, value); }
-    // void Shader::bind(unsigned int location, glm::mat4 const & matrix)
-    // { glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)); }
-  // Wrap Calls to glUniform
-    template <>
-    void Shader::bind<float>(unsigned int location, const float &value)
-    {
-        glUniform1f(location, value);
-    }
-    template <>
-    void Shader::bind<glm::mat4>(unsigned int location,const glm::mat4  &matrix)
-    {
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
-    }
-
     bool Shader::attach(std::string const & filename)
     {
         // Load GLSL Shader Source from File

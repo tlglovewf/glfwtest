@@ -9,9 +9,11 @@
 #define UNIFORM_PRJMTX   "uProjMatrix"
 
 #define UNIFORM_FADE     "uFade"
+#define UNIFORM_STRENGTH "uStrength"        //衰减强度
+#define UNIFORM_SPSTRGTH "uSpStrength"      //镜面光照强度
 
-#define UNIFORM_AMBCLR   "ambientcolor"
-#define UNIFORM_LIGHTCLR "lightcolor"
+#define UNIFORM_AMBCLR   "ambientcolor"     //环境光照
+#define UNIFORM_LIGHTCLR "lightcolor"       
 #define UNIFORM_LIGHTPOS "lightpos"
 #define UNIFORM_LIGHTDIR "lightdir"
 

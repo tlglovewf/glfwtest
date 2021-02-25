@@ -6,6 +6,7 @@ uniform vec3 lightpos;
 attribute vec3 aVtx;
 attribute vec3 aClr;
 attribute vec3 aNor;
+
 varying vec3 fragpos;
 varying vec3 color;
 varying vec3 nor;

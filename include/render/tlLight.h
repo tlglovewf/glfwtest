@@ -38,6 +38,8 @@ namespace tl
         //! 位置
         vec3 pos;
 
+        //! 衰减强度 [0,1] 越大衰减越快
+        float fade = 0.0;
         //! 类型
         virtual LightType type()const { return LightType::PointLight;}
     };

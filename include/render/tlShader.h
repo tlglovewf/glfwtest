@@ -25,6 +25,16 @@ namespace tl
         GLuint get() { return mProgram; }
         bool link();
 
+        void bind(unsigned int location, const float &value)
+        {
+            glUniform1f(location, value);
+        }
+
+        void bind(unsigned int location,const glm::mat4  &matrix)
+        {
+            glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+        }
+
         template <typename T>
         void bind(unsigned int location, const T &value)
         {
@@ -38,7 +48,7 @@ namespace tl
             }
             else
             {
-                
+
             }
         }
 
