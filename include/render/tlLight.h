@@ -45,9 +45,10 @@ namespace tl
     };
     
     //! 聚光灯
-    struct SpotLight : public PointLight
+    struct SpotLight : public virtual PointLight, public virtual DirLight
     {
-        //add more data
+        //! 夹角
+        float angle = 0.0;
         //! 类型
         virtual LightType type()const { return LightType::SpotLight;}
     };

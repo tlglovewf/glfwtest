@@ -35,6 +35,11 @@ namespace tl
             glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
         }
 
+        void bind(unsigned int location, const int &value)
+        {
+            glUniform1i(location, value);
+        }
+        
         template <typename T>
         void bind(unsigned int location, const T &value)
         {
@@ -46,7 +51,7 @@ namespace tl
             {
                 glUniform3fv(location, 1, glm::value_ptr(value));
             }
-            else
+            else 
             {
 
             }

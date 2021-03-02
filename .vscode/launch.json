@@ -8,7 +8,7 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/output/test_light",
+            "program": "${workspaceFolder}/build/output/test_shadow",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/output",

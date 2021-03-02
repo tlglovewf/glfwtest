@@ -2,6 +2,8 @@
 #define _DRAWABLE_H_
 #include <geometry/basegeom.h>
 #include <render/tlShader.h>
+#include <render/tlTexture.h>
+#include <memory>
 namespace tl
 {
     template <typename Shape>
@@ -21,10 +23,10 @@ namespace tl
             static constexpr GLuint ErrorValue = -1;
             inline bool check(GLuint v) { return (v != ErrorValue); }
         };
-
+        
     public:
         Drawable(float in, const color_t &clr);
-
+        Drawable(float width, float height, const std::shared_ptr<TextureUnit> &unit );
         ~Drawable();
 
         //! 获取gpu渲染对象
@@ -44,7 +46,8 @@ namespace tl
         void render(Shader &shader);
 
     protected:
-        Buffer _value;
+        Buffer                       _value;
+        std::shared_ptr<TextureUnit> _tex;
     };
 
 } // namespace tl

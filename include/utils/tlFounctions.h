@@ -19,7 +19,7 @@ namespace tl
                           const glm::vec3 &c)
         {
             glm::vec3 ab = b - a;
-
+ 
             glm::vec3 bc = c - b;
 
             return glm::normalize(glm::cross(ab, bc));

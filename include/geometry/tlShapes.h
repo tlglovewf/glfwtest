@@ -37,6 +37,24 @@ namespace tl
         virtual uint64_t renderType()const {return L_TRIANGLES;}
     };
 
+    //! 屏幕
+    class ScreenPlane : public base_geom<uint8_t>
+    {
+    public:
+        ScreenPlane(float f) : base_geom<uint8_t>(0){}
+           //! 构造函数
+        ScreenPlane(float scrWidth, float scrHeight) : base_geom<uint8_t>(0),_width(scrWidth), _height(scrHeight) {}
+
+        //! 构建网格
+        virtual void build(VertexVector &pts, U8IndiceVector &indices);
+
+        //! 渲染类型
+        virtual uint64_t renderType()const {return L_TRIANGLES;}
+    protected:
+        float _width;
+        float _height;
+    };
+
     //! 正方体
     class Box : public base_geom<uint8_t>
     {
