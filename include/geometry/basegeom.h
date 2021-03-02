@@ -12,7 +12,7 @@ namespace tl
     public:
         using Type = INDICETYPE;
         //! 构造函数
-        base_geom(float len):_axisLen(len){}
+        base_geom(float len,const vec3 &pos = {0.0f, 0.0f, 0.0f}):_axisLen(len),_pos(pos){}
 
         //! 构建网格
         virtual void build( VertexVector &pts, std::vector<INDICETYPE> &indices) = 0;
@@ -22,8 +22,10 @@ namespace tl
 
         //! 渲染类型
         virtual uint64_t renderType()const = 0;
+
     protected:
         float       _axisLen;
+        vec3        _pos;
         color_t     _color;
     };
 } // namespace tl

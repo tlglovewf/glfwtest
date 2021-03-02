@@ -26,7 +26,7 @@ namespace tl
     //! 平行光
     struct DirLight : public BaseLight
     {
-        //! 方向
+        //! 方向(指向光源方向)
         vec3    dir;
         //! 类型
         virtual LightType type()const { return LightType::DirLight;}

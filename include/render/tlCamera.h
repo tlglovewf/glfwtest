@@ -3,7 +3,7 @@
 #include <tlHeader.h>
 namespace tl
 {
-    class camera
+    class camera : public moveable
     {
     public:
         //! 获取世界变换矩阵
@@ -27,9 +27,9 @@ namespace tl
         }
 
         //! 设置投影矩阵
-        void setProjMatrixByOrtho(float left, float right, float bottom, float top)
+        void setProjMatrixByOrtho(float left, float right, float bottom, float top, float near = 0.0f, float far = 100.0f)
         {
-            _projMatrix = glm::ortho(left, right, bottom, top);
+            _projMatrix = glm::ortho(left, right, bottom, top, near, far);
         }
 
         //! 获取视图矩阵
@@ -48,6 +48,13 @@ namespace tl
         void setViewMatrix(const glm::vec3 &eye, const glm::vec3 &target, const glm::vec3 &up)
         {
             _viewMatrix = glm::lookAt(eye, target, up);
+        }
+        //! 设置观察方向
+        void setLookDir(const glm::vec3& dir)
+        {
+            glm::vec3 target = mPos + dir;
+            //默认设置y向上为正方向
+            setViewMatrix(mPos, target, glm::vec3(0, 1, 0));
         }
 
         //! 获取模型矩阵

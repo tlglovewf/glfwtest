@@ -30,4 +30,8 @@
 #define ATTR_TEXTURE2     "aUv2"
 
 
+
+
+
+#define MINUSONE          -1
 #endif

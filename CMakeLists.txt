@@ -17,7 +17,7 @@ option(BUILD_TEST "build test program" ON)
 # add_definitions(-std=c++11)
 
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
-
+ 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
     set(CMAKE_BUILD_TYPE "Debug")
 endif()

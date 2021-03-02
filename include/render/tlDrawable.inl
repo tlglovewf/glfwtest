@@ -9,14 +9,6 @@ namespace tl
         shape.setglobeColor(clr);
 
         shape.build(_value.vertices, _value.indices);
-
-        glGenBuffers(1, &_value.vboIdx);
-        glBindBuffer(GL_ARRAY_BUFFER, _value.vboIdx);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(tl::vertex) * _value.vertices.size(), &_value.vertices[0], GL_STATIC_DRAW);
-
-        glGenBuffers(1, &_value.eboIdx);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint8_t) * _value.indices.size(), &_value.indices[0], GL_STATIC_DRAW);
     }
 
     template <typename Shape>
@@ -25,14 +17,6 @@ namespace tl
         Shape shape(width, height);
 
         shape.build(_value.vertices, _value.indices);
-
-        glGenBuffers(1, &_value.vboIdx);
-        glBindBuffer(GL_ARRAY_BUFFER, _value.vboIdx);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(tl::vertex) * _value.vertices.size(), &_value.vertices[0], GL_STATIC_DRAW);
-
-        glGenBuffers(1, &_value.eboIdx);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint8_t) * _value.indices.size(), &_value.indices[0], GL_STATIC_DRAW);
     }
 
     template <typename Shape>
@@ -53,9 +37,18 @@ namespace tl
     template <typename Shape>
     void Drawable<Shape>::active()
     {
-        if (_value.vboIdx > 0 &&
-            _value.eboIdx > 0)
-        {
+        if (!_value.isvalid())
+        {//不存在 创建后绑定数据
+            glGenBuffers(1, &_value.vboIdx);
+            glBindBuffer(GL_ARRAY_BUFFER, _value.vboIdx);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(tl::vertex) * _value.vertices.size(), &_value.vertices[0], GL_STATIC_DRAW);
+
+            glGenBuffers(1, &_value.eboIdx);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint8_t) * _value.indices.size(), &_value.indices[0], GL_STATIC_DRAW);
+        }
+        else
+        {//存在缓存单元 直接绑定
             glBindBuffer(GL_ARRAY_BUFFER, _value.vboIdx);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _value.eboIdx);
         }

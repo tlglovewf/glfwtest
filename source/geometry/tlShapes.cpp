@@ -14,12 +14,16 @@ namespace tl
         vertex vtx;
         vtx.clr = _color;
         vtx.pos = {-1.0f * _axisLen, 0.0f, -0.5774f * _axisLen};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {1.0f * _axisLen, 0.0f, -0.5774f * _axisLen};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {0.0f, 0.0f, 1.154f * _axisLen};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {0.0f, 1.732f * _axisLen, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         indices = {0, 1, 3,
@@ -37,12 +41,16 @@ namespace tl
         vertex vtx;
         vtx.clr = _color;
         vtx.pos = {-half_len, -half_len, -0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {half_len, -half_len, -0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {half_len, half_len, -0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.pos = {-half_len, half_len, -0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         indices = {0, 1, 2,
@@ -87,27 +95,35 @@ namespace tl
 
         //build vertices buffer 
         vtx.pos = {-half_len, -half_len, half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = { half_len, -half_len, half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = { half_len,  half_len, half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = {-half_len,  half_len, half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = {-half_len, -half_len,-half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = { half_len, -half_len,-half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = { half_len,  half_len,-half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.pos = {-half_len,  half_len,-half_len};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         //build indices buffer
@@ -142,24 +158,30 @@ namespace tl
         vertex vtx;
         vtx.clr = color_t(1.0f, 0.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.clr = color_t(0.0f, 1.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         vtx.clr = color_t(0.0f, 0.0f, 1.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.clr = color_t(1.0f, 0.0f, 0.0f, 1.0f);
         vtx.pos = {_axisLen, 0.0f, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.clr = color_t(0.0f, 1.0f, 0.0f, 1.0f);
         vtx.pos = {0.0f, _axisLen, 0.0f};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
 
         vtx.clr = color_t(0.0f, 0.0f, 1.0f, 1.0f);
         vtx.pos = {0.0f, 0.0f, _axisLen};
+        vtx.pos += _pos;
         pts.emplace_back(vtx);
         
         indices = {0, 3, 1, 4, 2, 5};

@@ -14,7 +14,7 @@ namespace tl
     {
     public:
         //! 构造函数
-        Pyramid(float baserd) : base_geom<uint8_t>(baserd) {}
+        Pyramid(float baserd,const vec3 &pos = {0.0f, 0.0f, 0.0f}) : base_geom<uint8_t>(baserd,pos) {}
 
         //! 构建网格
         virtual void build(VertexVector &pts, U8IndiceVector &indices);
@@ -28,7 +28,7 @@ namespace tl
     {
     public:
         //! 构造函数
-        Plane(float length) : base_geom<uint8_t>(length) {}
+        Plane(float length,const vec3 &pos = {0.0f, 0.0f, 0.0f}) : base_geom<uint8_t>(length, pos) {}
 
         //! 构建网格
         virtual void build(VertexVector &pts, U8IndiceVector &indices);
@@ -60,7 +60,7 @@ namespace tl
     {
     public:
         //! 构造函数
-        Box(float length) : base_geom<uint8_t>(length) {}
+        Box(float length,const vec3 &pos = {0.0f, 0.0f, 0.0f}) : base_geom<uint8_t>(length, pos) {}
 
         //! 构建网格
         virtual void build(VertexVector &pts, U8IndiceVector &indices);
@@ -74,7 +74,7 @@ namespace tl
     {
     public:
        //! 构造函数
-       Axis(float length) : base_geom<uint8_t>(length) {}
+       Axis(float length,const vec3 &pos = {0.0f, 0.0f, 0.0f}) : base_geom<uint8_t>(length,pos) {}
 
        //! 构建网格
        virtual void build(VertexVector &pts, U8IndiceVector &indices); 
@@ -88,7 +88,7 @@ namespace tl
     {
     public:
        //! 构造函数
-       Line(float length) : base_geom<uint8_t>(length) {}
+       Line(float length, const vec3 &pos = {0.0f, 0.0f, 0.0f}) : base_geom<uint8_t>(length, pos) {}
 
        //! 构建网格
        virtual void build(VertexVector &pts, U8IndiceVector &indices); 

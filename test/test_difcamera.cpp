@@ -31,7 +31,7 @@ void save_gpuimage(const std::string &path)
     image.setData(data, WIN_WIDTH, WIN_HEIGHT, 4);
     image.save(path.c_str());
 }
-//! 离屏渲染
+
 class OffScreenDrawer
 {
 public:
@@ -209,6 +209,7 @@ int main(int argc, char **argv)
 
     // cam.setViewMatrix(glm::vec3(0.0f, -800.0f, 120.0f), glm::vec3(0, 0, 100), glm::vec3(0, 1, 0));
   
+
     //! set default color
     const float rt = 0.25f;
     tl::color_t ambiclr = {rt, rt, rt, rt};
@@ -220,7 +221,7 @@ int main(int argc, char **argv)
     ptlight.fade = 1e-4;
 #else
     tl::DirLight dirlight;
-    dirlight.dir = {0.0, 0.0, 1.0}; 
+    dirlight.dir = {0.0, 0.0, 1.0};
     dirlight.clr = {1.0f, 1.0f, 1.0f, 1.0f};
 #endif
 
@@ -269,15 +270,23 @@ int main(int argc, char **argv)
         shader.bind(UNIFORM_PRJMTX, cam.getProjMatrix());
 
         cam.setPosition(glm::vec3(0.0f, -800.0f, 120.0f));
-        cam.setLookDir(-glm::vec3(0.0f, -800.0f, 120.0f));
+        cam.setLookDir(glm::vec3(0,0,0) - glm::vec3(0.0f, -800.0f, 120.0f));
         shader.bind(UNIFORM_VIEWMTX, cam.getViewMatrix());
         renderScene(shader);
-        // renderScreen(unit);
 
-        glViewport(0, 0,  WIN_WIDTH, 0.5 * WIN_HEIGHT);
+        //右下  不同相机视点
+        glViewport(0.5 * WIN_WIDTH, 0, 0.5 * WIN_WIDTH, 0.5 * WIN_HEIGHT);
+        cam.setPosition(glm::vec3(300.0f, -800.0f, 120.0f));
+        cam.setLookDir(-glm::vec3(300.0f, -800.0f, 120.0f));
+        shader.bind(UNIFORM_VIEWMTX, cam.getViewMatrix());
+        renderScene(shader);
+
+        //左下 光源视角
+        glViewport(0, 0, 0.5 * WIN_WIDTH, 0.5 * WIN_HEIGHT);
         auto pos = dirlight.dir * 800.0f;
-        static float size = 400.0f;
-        cam.setProjMatrixByOrtho(-400, 400, -300, 300,0.0f, 2000.0f);
+        static float size = 300.0f;
+        size += 1e-1;
+        cam.setProjMatrixByOrtho(-size, size, -size, size,0.0f, 2000.0f);
         shader.bind(UNIFORM_PRJMTX, cam.getProjMatrix());
 
         cam.setPosition(pos);

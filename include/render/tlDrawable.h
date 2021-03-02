@@ -7,7 +7,7 @@
 namespace tl
 {
     template <typename Shape>
-    class Drawable
+    class Drawable : public moveable
     {
     public:
         using IdxType = typename Shape::Type; 
@@ -22,13 +22,18 @@ namespace tl
 
             static constexpr GLuint ErrorValue = -1;
             inline bool check(GLuint v) { return (v != ErrorValue); }
+            inline bool isvalid()const {return vboIdx != ErrorValue;}
         };
         
     public:
         Drawable(float in, const color_t &clr);
         Drawable(float width, float height, const std::shared_ptr<TextureUnit> &unit );
         ~Drawable();
-
+         //! 设置位置
+        virtual void setPosition(const vec3 &pos)
+        {
+            mPos = pos;
+        }
         //! 获取gpu渲染对象
         const Buffer &get() const
         {
