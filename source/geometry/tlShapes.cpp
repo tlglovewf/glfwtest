@@ -64,6 +64,7 @@ namespace tl
     {
         pts.reserve(4);
         assert(_width > 0 && _height > 0);
+#if 0  //y轴翻转(主要对应外部纹理坐标)
         vertex vtx;
         vtx.pos = {0.0f, 0.0f, 0.0f};
         vtx.uv = {0.0f, 1.0f};
@@ -77,7 +78,21 @@ namespace tl
         vtx.pos = {0.0f, _height, 0.0f};
         vtx.uv = {0.0f, 0.0f};
         pts.emplace_back(vtx);
-
+#else
+        vertex vtx;
+        vtx.pos = {0.0f, 0.0f, 0.0f};
+        vtx.uv = {0.0f, 0.0f};
+        pts.emplace_back(vtx);
+        vtx.pos = {_width, 0.0f, 0.0f};
+        vtx.uv = {1.0f, 0.0f};
+        pts.emplace_back(vtx);
+        vtx.pos = {_width, _height, 0.0f};
+        vtx.uv = {1.0f, 1.0f};
+        pts.emplace_back(vtx);
+        vtx.pos = {0.0f, _height, 0.0f};
+        vtx.uv = {0.0f, 1.0f};
+        pts.emplace_back(vtx);
+#endif
         indices = {0, 1, 2,
                    0, 2, 3};
     }

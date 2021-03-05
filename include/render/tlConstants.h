@@ -7,6 +7,7 @@
 #define UNIFORM_MODMTX    "uModelMatrix"
 #define UNIFORM_VIEWMTX   "uViewMatrix"
 #define UNIFORM_PRJMTX    "uProjMatrix"
+#define UNIFORM_LGTMTR    "uLightSpaceMatrix"
  
 #define UNIFORM_TEXCOORD0 "uTexCoord0"
 #define UNIFORM_TEXCOORD1 "uTexCoord1"

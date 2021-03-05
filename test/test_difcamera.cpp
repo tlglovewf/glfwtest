@@ -32,88 +32,16 @@ void save_gpuimage(const std::string &path)
     image.save(path.c_str());
 }
 
-class OffScreenDrawer
-{
-public:
-    enum class eTexType
-    {
-        eDepthTex,
-        eColorTex
-    };
-    //! 创建离屏纹理并绑定
-    void createTextureAndBind(int width, int height, eTexType type = eTexType::eColorTex)
-    {
-        if (mFboid > MINUSONE)
-            return;
-        glGenFramebuffers(1, &mFboid);
-        glGenTextures(1, &mTexid);
-        glBindTexture(GL_TEXTURE_2D, mTexid);
-
-        if (type == eTexType::eDepthTex)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                         WIN_WIDTH, WIN_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        }
-        else
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                         WIN_WIDTH, WIN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-        }
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, mFboid);
-
-        if (type == eTexType::eDepthTex)
-        {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mTexid, 0);
-            glDrawBuffer(GL_NONE); //禁止渲染颜色
-            glReadBuffer(GL_NONE);
-        }
-        else
-        {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexid, 0);
-            glDrawBuffer(GL_FRONT);
-            glReadBuffer(GL_FRONT);
-        }
-
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE)
-        {
-            printf("bind texture failed !\n");
-            throw std::runtime_error("");
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
-    //! 激活
-    void active()
-    {
-        if(mFboid > MINUSONE)
-        {
-            glBindFramebuffer(GL_FRAMEBUFFER, mFboid);
-        }
-    }
-
-    //! 取消激活
-    void unactive()
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-protected:
-    GLuint mFboid = MINUSONE;
-    GLuint mTexid = MINUSONE;
-};
-
 void renderScene(tl::Shader &shader)
 {
+  
     static const float grayclr = 0.8f;
     static tl::Drawable<tl::Box> pyramid(100.0f, tl::color_t(1.0f, 0.0f, 0.0f, 1.0f));
     static tl::Drawable<tl::Plane> plane(600.0f, tl::color_t(grayclr, grayclr, grayclr, 1.0f));
-    glm::mat4 modelmtrix = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 150)) *
+
+ 
+
+    glm::mat4 modelmtrix = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 90)) *
                            glm::rotate(glm::identity<glm::mat4>(), (float)glfwGetTime() * 2.0f, glm::vec3(0, 0, 1)) *
                            glm::rotate(glm::identity<glm::mat4>(), glm::radians(45.0f), glm::vec3(0, 1, 0)) *
                            glm::rotate(glm::identity<glm::mat4>(), glm::radians(45.0f), glm::vec3(1, 0, 0));
@@ -123,6 +51,7 @@ void renderScene(tl::Shader &shader)
 
     shader.bind(UNIFORM_MODMTX, glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 0)));
     plane.render(shader);
+
 }
 
 void renderScreen(const std::shared_ptr<tl::TextureUnit> &unit)
