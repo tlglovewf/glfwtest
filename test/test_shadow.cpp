@@ -275,7 +275,9 @@ int main(int argc, char **argv)
         glClear(GL_DEPTH_BUFFER_BIT );
         depthshader.bind(UNIFORM_PRJMTX, cam.getProjMatrix());
         depthshader.bind(UNIFORM_VIEWMTX, cam.getViewMatrix());
+        glCullFace(GL_FRONT);//为了消除偏移过大 悬浮的问题
         renderScene(depthshader);  
+        glCullFace(GL_BACK);
         off.unactive();
         
          //设置视口

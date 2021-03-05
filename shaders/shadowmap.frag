@@ -17,16 +17,28 @@ float ShadowCalculation(vec4 lfragpos)
     vec3 projCoords = lfragpos.xyz / lfragpos.w;
     //-> [0, 1]
     projCoords = projCoords * 0.5 + 0.5;
-
+    if(projCoords.z > 1.0)
+        return 0.0;
     //从深度图中获取最近点深度(即在光源视角物体的深度值)
     float closetDepth = texture(uTexCoord0, projCoords.xy).r;
     // 获取当前片元在光源视角下深度
     float currentDepth = projCoords.z;
-
     //由于分辨率的影响,会导致多个点寻址同一个点(阴影失真) 加偏移消除影响
     float bias = 0.005;
-    float shadow = currentDepth - bias > closetDepth ? 1.0 : 0.0;
-
+    //float bias = max(0.05 * (1.0 - dot(nor, vlightdir)), 0.005);
+    //float shadow = currentDepth - bias > closetDepth ? 1.0 : 0.0;
+    float shadow = 0.0;
+    //取像素周围点平均值  PCF(百分比渐进过滤)
+    vec2 texelSize = 1.0 / textureSize(uTexCoord0, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(uTexCoord0, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
     return shadow;
 }
 
