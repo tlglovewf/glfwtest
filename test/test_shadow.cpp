@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <vector>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include <stb_image/stb_image.h>
 
@@ -19,6 +18,9 @@
 #include <render/tlLight.h>
 #include <render/tlTexture.h>
 #include <geometry/tlShapes.h>
+
+#include <win/tlWinManager.h>
+
 #define WIN_WIDTH   800
 #define WIN_HEIGHT  600
 #define SHADOW_SIZE 1024
@@ -160,35 +162,9 @@ void renderScreen(const std::shared_ptr<tl::TextureUnit> &unit)
 #define DISPLAYDEPTHMAP  1 //显示深度贴图
 int main(int argc, char **argv)
 {
-    GLFWwindow *window = nullptr;
-
-    if (!glfwInit())
+    tl::GlfwManager window(WIN_WIDTH, WIN_HEIGHT);
+    if(!window.init())
         return -1;
-
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-
-    window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "This is first glfw program", NULL, NULL);
-
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGL())
-    {
-        std::cout << "load glad failed!" << std::endl;
-        return -1;
-    }
-
-    glfwSwapInterval(1); //垂直同步
-    glfwSetErrorCallback([](int error, const char *description) -> void {
-        std::cout << "error : " << error << " " << description << std::endl;
-    });
-
-    if (!window)
-    {
-        std::cout << "Create window failed." << std::endl;
-        glfwTerminate();
-        return -1;
-    }
 
     std::shared_ptr<tl::TextureUnit> unit = std::make_shared<tl::TextureUnit>();
     // if (!unit->generate("/media/tu/Work/OpenGLTest/datas/images/toy_box_diffuse.png"))
@@ -252,7 +228,7 @@ int main(int argc, char **argv)
     // off.createTextureAndBind( WIN_WIDTH, WIN_HEIGHT, OffScreenDrawer::eTexType::eDepthTex);
     off.createTextureAndBind( SHADOW_SIZE, SHADOW_SIZE, OffScreenDrawer::eTexType::eDepthTex);
     unit->texId = off.texid();
-    while (!glfwWindowShouldClose(window))
+    window.renderLoop([&]()->void
     {
         glClearColor(0.0, 0.0, 0.0, 1.0);       
         // glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -345,12 +321,9 @@ int main(int argc, char **argv)
         shader.bind(UNIFORM_VIEWMTX, cam.getViewMatrix());
         renderScene(shader);
 #endif
-        glfwSwapBuffers(window);
 
-        glfwPollEvents();
-    }
+    });
 
-    glfwDestroyWindow(window);
 
     // 不注释 退出会发生崩溃
     // glfwTerminate();

@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <vector>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,43 +14,23 @@
 #include <render/tlCamera.h>
 #include <render/tlLight.h>
 #include <geometry/tlShapes.h>
+
+#include <win/tlWinManager.h>
+
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
 
 //! 光照类型 0 平行光   1 点光源
 #define LIGHTTYPE  1 
 
+
+
+
 int main(int argc, char **argv)
 {
-    GLFWwindow *window = nullptr;
-
-    if (!glfwInit())
+    tl::GlfwManager window(WIN_WIDTH, WIN_HEIGHT);
+    if(!window.init())
         return -1;
-    
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-
-    window = glfwCreateWindow(800, 600, "This is first glfw program", NULL, NULL);
-
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGL()) //!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "load glad failed!" << std::endl;
-        return -1;
-    }
-
-    glfwSwapInterval(1); //垂直同步
-    glfwSetErrorCallback([](int error, const char *description) -> void {
-        std::cout << "error : " << error << " " << description << std::endl;
-    });
-
-    if (!window)
-    {
-        std::cout << "Create window failed." << std::endl;
-        glfwTerminate();
-        return -1;
-    }
     const float grayclr = 0.8f;
     tl::Drawable< tl::Box  > pyramid(100.0f, tl::color_t(1.0f, 0.0f, 0.0f, 1.0f));
     tl::Drawable< tl::Plane> plane  (600.0f, tl::color_t(grayclr, grayclr, grayclr, 1.0f));
@@ -93,7 +72,7 @@ int main(int argc, char **argv)
     dirlight.dir = {0.0,0.0,1.0};
     dirlight.clr = {1.0f, 1.0f, 1.0f, 1.0f};
 #endif
-    while (!glfwWindowShouldClose(window))
+    window.renderLoop([&]()->void
     {
         shader.bind(UNIFORM_AMBCLR, ambiclr);
         
@@ -111,11 +90,6 @@ int main(int argc, char **argv)
         shader.bind(UNIFORM_LIGHTCLR, dirlight.clr);
         shader.bind(UNIFORM_LIGHTDIR, dirlight.dir);
 #endif
-        int width  = 0;
-        int height = 0;
-        //获取长宽
-        glfwGetFramebufferSize(window, &width, &height);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // glClearColor(135.0f / 255.0f, 206.0f / 255.0f, 206.0f / 255.0f, 1.0f);  lightblue
@@ -129,7 +103,7 @@ int main(int argc, char **argv)
         cam.setModelMatrix(modelmtrix);
 
         //设置视口
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
 
         // shader.bind(UNIFORM_MVP, cam.getMVP());
         shader.bind(UNIFORM_MODMTX, cam.getModelMatrix());
@@ -143,14 +117,7 @@ int main(int argc, char **argv)
         // shader.bind(UNIFORM_MVP, cam.getMVP());
         shader.bind(UNIFORM_MODMTX, cam.getModelMatrix());
         plane.render(shader);
+    });
 
-        glfwSwapBuffers(window);
-
-        glfwPollEvents();
-    }
-
-    glfwDestroyWindow(window);
-
-    // glfwTerminate();
     return 0;
 }
