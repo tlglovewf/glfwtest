@@ -14,8 +14,6 @@ endif()
 
 option(BUILD_TEST "build test program" ON)
 
-# add_definitions(-std=c++11)
-
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
  
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
@@ -29,7 +27,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-link_libraries(glfw3 glad)
+if(WIN32)
+    include_directories("E:/Sources/glfw-3.3.4/include")
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/glad)
+else()
+    link_libraries(glfw3 glad)
+endif()
+
+
 
 set(MYSDK "mygl")
 
